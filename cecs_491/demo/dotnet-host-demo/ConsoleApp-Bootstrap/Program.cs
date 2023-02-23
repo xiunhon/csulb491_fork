@@ -53,13 +53,19 @@ var hostBuilder = Host.CreateDefaultBuilder(args)
 
 
             // Setup Dependencies
+            //.AddTransient<IAwsS3Service, SomeOtherConcreteImplementation>
+            /* another way to pass id and pw
+            ** .AddSingleton < IAwsS3Username > "abc";
+            **.AddSingleton < IAwsS3Password > "password";
+            ** hardcode, insecure, stored in byte code .dll, 
+            */ 
             .AddTransient<IAwsS3Service>((services) =>
             {
                 var opts = services.GetRequiredService<IOptions<AwsS3Options>>();
 
                 // Example of providing configuration values to an object that you want registered with .NET's DI
-                return new AwsS3Service(opts.Value.AccessKey, opts.Value.SecretKey);
-            })
+                return new AwsS3Service(opts.Value.AccessKey, opts.Value.SecretKey);//credentials to AWS3 access
+            })//return an instance using Factory Pattern
 
             // Application Bootstrapping
             .AddHostedService<MyCustomApp>();

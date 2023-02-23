@@ -23,6 +23,8 @@
         public static AuthDAO CreateInstance()
         {
             // NOT a thread-safe implementation of updating
+            // use 2 locks to read and update a variable, don't use static
+            // however, only use when truly need.
             _instanceCounter++;
 
             return new AuthDAO();

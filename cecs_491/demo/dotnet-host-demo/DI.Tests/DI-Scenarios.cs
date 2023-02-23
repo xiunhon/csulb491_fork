@@ -24,17 +24,21 @@ namespace DI.Tests
         public void ObjectWithNestedDependencies_DI()
         {
 
-            IServiceCollection services = new ServiceCollection();
+            IServiceCollection services = new ServiceCollection(); //always register with an interface
 
             // Registration of dependencies to be controlled by DI container
+            // only constructor injection
+            //services.AddTransient(typeof(IAuthDAO), AuthDAO);
             services.AddTransient<AuthDAO>();
             services.AddTransient<AuthChecker>();
             services.AddTransient<AccountManager>();
 
+            //nothing actually happens until BuildServiceProvider is called
 
             IServiceProvider provider = services.BuildServiceProvider();
 
-            var accountManager = provider.GetRequiredService<AccountManager>();
+            //provider.GetService<AccountManager>(); //return NULL if couldn't get service
+            var accountManager = provider.GetRequiredService<AccountManager>(); //throw exception if can't get service
 
             Assert.IsNotNull(accountManager);
         }
@@ -153,7 +157,7 @@ namespace DI.Tests
 
             var accountManager = provider.GetRequiredService<AccountManager>();
 
-            var scope = provider.CreateScope();
+            var scope = provider.CreateScope();//common when running parallel coding (i.e transactions)
 
             var accountManager2 = scope.ServiceProvider.GetRequiredService<AccountManager>();
 
